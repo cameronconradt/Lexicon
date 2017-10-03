@@ -14,14 +14,15 @@ Lexicon::~Lexicon()
 
 string Lexicon::tostring()
 {
-	string output = "";
+	stringstream output;
 	for (int i = 0; i < tokens.size(); i++)
 	{
 		//(Token_Type,"Value",Line_Number)
-		output+=  "\(" + tokens[i]->gettype() + ",\"" + tokens[i]->gettext() + "\"," + tokens[i]->getline() + ")\n";
+		output <<  "\(" << tokens[i]->gettype() << ",\"" + tokens[i]->gettext() << "\"," + tokens[i]->getline() << ")\n";
 	}
-	output += "Total Tokens = " + tokens.size();
-	return output;
+	output << "Total Tokens = " << tokens.size();
+	output << "\n";
+	return output.str();
 }
 void Lexicon::readin(char in)
 {
@@ -29,6 +30,8 @@ void Lexicon::readin(char in)
 }
 void Lexicon::filter()
 {
+	chars.pop_back();
+	chars.pop_back();
 	int startline;
 	for (int i = 0; i < chars.size(); i++)
 	{
@@ -37,14 +40,10 @@ void Lexicon::filter()
 		{
 			i = id(startline, i);
 		}
-		else if (chars[i] == EOF)
-		{
-			eof(startline);
-		}
 		else
 		{
 			switch (chars[i]) {
-			case '\n': endline++;
+			case '\n':endline++;
 				break;
 			case ',': comma(startline);
 				break;
@@ -86,6 +85,7 @@ void Lexicon::filter()
 			}
 		}
 	}
+		eof(endline);
 }
 void Lexicon::comma(int line)
 {
@@ -184,6 +184,7 @@ int Lexicon::addstring(int line, int pos)
 		}
 		else if (i == chars.size()-1)
 		{
+			endline = line;
 			return undefined(line, pos);
 		}
 		else if (chars[i] == '\n')
@@ -203,12 +204,13 @@ int Lexicon::block_comment(int line, int pos)
 	for (int i = pos + 2; found == 0; i++)
 	{
 		text += chars[i];
-		if (chars[i] == '|' && chars[i + 1] != '#')
+		if (chars[i-1] == '|' && chars[i] == '#')
 		{
 			found = i;
 		}
 		else if (i == chars.size() - 1)
 		{
+			endline = line;
 			return undefined(line, pos);
 		}
 		else if (chars[i] == '\n')
@@ -328,7 +330,7 @@ int Lexicon::id(int line, int pos)
 		for (int i = pos; toreturn == 0; i++)
 		{
 			text += chars[i];
-			if (isspace(chars[i + 1]) || chars[i+1] == '\n')
+			if (isspace(chars[i + 1]) || chars[i+1] == '\n' || !isalpha(chars[i+1]))
 				toreturn = i;
 		}
 		Token* mytoken = new Token("ID", text, line);

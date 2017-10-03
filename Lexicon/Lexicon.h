@@ -3,6 +3,7 @@
 #include <vector>
 #include <sstream>
 #include <ctype.h>
+#include <iostream>
 #include "Token.h"
 
 using namespace std;
