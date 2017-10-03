@@ -4,7 +4,7 @@
 class scan
 {
 public:
-	scan(char* filename);
+	scan(char* infilename);
 	~scan();
 	string tostring();
 	void startscan();

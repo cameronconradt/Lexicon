@@ -177,19 +177,20 @@ int Lexicon::addstring(int line, int pos)
 		text += chars[i];
 		if (chars[i] == '\'')
 		{
-			if (chars[i + 1] != '\'')
+			if (chars[i + 1] == '\'')
 				i++;
 			else
 				found = i;
+		}
+		else if (i == chars.size()-1)
+		{
+			return undefined(line, pos);
 		}
 		else if (chars[i] == '\n')
 		{
 			endline++;
 		}
-		else if (chars[i + 1] == EOF)
-		{
-			return undefined(line, pos);
-		}
+
 	}
 	Token* mytoken = new Token("STRING", text, line);
 	tokens.push_back(mytoken);
@@ -206,14 +207,15 @@ int Lexicon::block_comment(int line, int pos)
 		{
 			found = i;
 		}
+		else if (i == chars.size() - 1)
+		{
+			return undefined(line, pos);
+		}
 		else if (chars[i] == '\n')
 		{
 			endline++;
 		}
-		else if (chars[i + 1] == EOF)
-		{
-			return undefined(line, pos);
-		}
+
 	}
 	Token* mytoken = new Token("COMMENT", text, line);
 	tokens.push_back(mytoken);
@@ -230,7 +232,7 @@ int Lexicon::undefined(int line, int pos)
 		{
 			endline++;
 		}
-		if (chars[i + 1] == EOF)
+		if (i == chars.size()-1)
 		{
 			found = i;
 		}

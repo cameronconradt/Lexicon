@@ -2,9 +2,10 @@
 
 
 
-scan::scan(char* filename)
+scan::scan(char* infilename)
 {
 	mylex = new Lexicon();
+	filename = infilename;
 }
 
 
@@ -22,8 +23,8 @@ void scan::startscan()
 	ifstream myfile(filename);
 	if (myfile.is_open())
 	{
-		char temp = 'l';
-		while (temp != EOF)
+		char temp;
+		while (!myfile.eof())
 		{
 			myfile.get(temp);
 			mylex->readin(temp);
